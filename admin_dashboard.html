@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RDLog 관리자 대시보드</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background:#0B1D2E; color:#fff; min-height:100vh; }
+
+  .header { background:#0d2035; padding:20px 24px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; justify-content:space-between; }
+  .logo { font-size:22px; font-weight:900; }
+  .logo span { color:#00B894; }
+  .badge { background:rgba(0,184,148,.2); color:#00B894; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; border:1px solid #00B894; }
+
+  .main { padding:24px; max-width:1000px; margin:0 auto; }
+
+  /* 로그인 */
+  .login-wrap { display:flex; align-items:center; justify-content:center; min-height:80vh; }
+  .login-card { background:#0d2035; border-radius:20px; padding:40px; width:100%; max-width:400px; border:1px solid rgba(255,255,255,.08); }
+  .login-title { font-size:22px; font-weight:800; margin-bottom:8px; }
+  .login-sub { color:rgba(255,255,255,.4); font-size:14px; margin-bottom:28px; }
+  .login-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 16px; font-size:15px; color:#fff; outline:none; margin-bottom:12px; }
+  .login-input:focus { border-color:#00B894; }
+  .login-btn { width:100%; background:#00B894; border:none; border-radius:12px; padding:16px; font-size:16px; font-weight:800; color:#fff; cursor:pointer; }
+  .login-btn:hover { background:#00a070; }
+
+  /* 통계 카드 */
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+  .stat-card { background:#0d2035; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,.06); }
+  .stat-num { font-size:32px; font-weight:900; color:#00B894; margin-bottom:4px; }
+  .stat-label { font-size:13px; color:rgba(255,255,255,.4); }
+
+  /* 필터 */
+  .filter-row { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:rgba(255,255,255,.5); font-size:13px; font-weight:600; cursor:pointer; }
+  .filter-btn.active { background:#00B894; border-color:#00B894; color:#fff; }
+
+  /* 요청 카드 */
+  .request-card { background:#0d2035; border-radius:16px; padding:20px; margin-bottom:12px; border:1px solid rgba(255,255,255,.06); }
+  .request-card:hover { border-color:rgba(0,184,148,.3); }
+  .req-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+  .req-id { font-size:12px; color:rgba(255,255,255,.3); font-family:monospace; }
+  .status-badge { padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; }
+  .status-pending    { background:rgba(255,193,7,.15);  color:#FFC107; border:1px solid rgba(255,193,7,.3); }
+  .status-processing { background:rgba(59,130,246,.15); color:#3B82F6; border:1px solid rgba(59,130,246,.3); }
+  .status-completed  { background:rgba(0,184,148,.15);  color:#00B894; border:1px solid rgba(0,184,148,.3); }
+  .req-name { font-size:17px; font-weight:700; margin-bottom:4px; }
+  .req-meta { font-size:13px; color:rgba(255,255,255,.4); margin-bottom:12px; }
+  .req-project { font-size:14px; color:#00B894; font-weight:600; margin-bottom:12px; }
+
+  .req-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .btn-view   { padding:8px 16px; border-radius:10px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#fff; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-view:hover { background:rgba(255,255,255,.06); }
+  .btn-complete { padding:8px 16px; border-radius:10px; border:none; background:#00B894; color:#fff; font-size:13px; font-weight:700; cursor:pointer; }
+  .btn-complete:hover { background:#00a070; }
+  .btn-processing { padding:8px 16px; border-radius:10px; border:none; background:#3B82F6; color:#fff; font-size:13px; font-weight:700; cursor:pointer; }
+
+  /* 모달 */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .modal { background:#0d2035; border-radius:20px; padding:28px; width:100%; max-width:600px; border:1px solid rgba(255,255,255,.1); max-height:90vh; overflow-y:auto; }
+  .modal-title { font-size:18px; font-weight:800; margin-bottom:20px; }
+  .modal-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+  .modal-key { font-size:13px; color:rgba(255,255,255,.4); }
+  .modal-val { font-size:13px; font-weight:600; text-align:right; max-width:60%; }
+  .modal-img { width:100%; border-radius:12px; margin:16px 0; }
+  .note-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:12px; padding:14px; font-size:14px; color:#fff; outline:none; min-height:160px; resize:vertical; margin:16px 0; }
+  .note-input:focus { border-color:#00B894; }
+  .modal-btns { display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+  .btn-cancel { padding:12px 20px; border-radius:10px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#fff; font-size:14px; cursor:pointer; }
+  .btn-send { padding:12px 24px; border-radius:10px; border:none; background:#00B894; color:#fff; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn-send:hover { background:#00a070; }
+  .btn-send:disabled { opacity:.5; cursor:not-allowed; }
+
+  .empty { text-align:center; padding:60px 20px; color:rgba(255,255,255,.3); }
+  .empty-icon { font-size:48px; margin-bottom:16px; }
+  .refresh-btn { background:rgba(0,184,148,.15); border:1.5px solid rgba(0,184,148,.3); color:#00B894; padding:10px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-left:auto; display:block; }
+
+  @media(max-width:600px) {
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .modal { padding:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">RD<span>Log</span> 관리자</div>
+  <div id="headerBadge"></div>
+</div>
+
+<div class="main" id="app"></div>
+
+<script>
+const API = 'https://rdlog-server-production.up.railway.app';
+let adminKey = '';
+let requests = [];
+let filter = 'all';
+let selectedRequest = null;
+
+/* ── 렌더 ─── */
+function render() {
+  const app = document.getElementById('app');
+  if (!adminKey) { app.innerHTML = renderLogin(); return; }
+  app.innerHTML = renderDashboard();
+}
+
+function renderLogin() {
+  return `
+    <div class="login-wrap">
+      <div class="login-card">
+        <div style="font-size:40px;text-align:center;margin-bottom:16px">🔐</div>
+        <div class="login-title">관리자 로그인</div>
+        <div class="login-sub">RDLog 대행 서비스 관리 패널</div>
+        <input class="login-input" type="password" id="keyInput" placeholder="관리자 키 입력" 
+          onkeydown="if(event.key==='Enter')login()">
+        <button class="login-btn" onclick="login()">로그인</button>
+      </div>
+    </div>`;
+}
+
+function renderDashboard() {
+  const filtered = filter === 'all' ? requests :
+    requests.filter(r => r.status === filter);
+
+  const pending   = requests.filter(r => r.status === 'pending').length;
+  const processing= requests.filter(r => r.status === 'processing').length;
+  const completed = requests.filter(r => r.status === 'completed').length;
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <div style="font-size:22px;font-weight:800">대행 요청 관리</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:4px">총 ${requests.length}건</div>
+      </div>
+      <button class="refresh-btn" onclick="loadRequests()">↻ 새로고침</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num">${pending}</div>
+        <div class="stat-label">⏳ 대기 중</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#3B82F6">${processing}</div>
+        <div class="stat-label">⚙️ 처리 중</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${completed}</div>
+        <div class="stat-label">✅ 완료</div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      ${['all','pending','processing','completed'].map(f => `
+        <button class="filter-btn ${filter===f?'active':''}" onclick="setFilter('${f}')">
+          ${{all:'전체',pending:'대기중',processing:'처리중',completed:'완료'}[f]}
+        </button>`).join('')}
+    </div>
+
+    ${filtered.length === 0 ? `
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <div>요청이 없습니다</div>
+      </div>` :
+      filtered.map(r => renderCard(r)).join('')
+    }
+
+    ${selectedRequest ? renderModal() : ''}
+  `;
+}
+
+function renderCard(r) {
+  const date = new Date(r.createdAt).toLocaleString('ko-KR');
+  return `
+    <div class="request-card">
+      <div class="req-header">
+        <div class="req-id">${r.requestId}</div>
+        <div class="status-badge status-${r.status}">
+          ${{pending:'⏳ 대기중',processing:'⚙️ 처리중',completed:'✅ 완료'}[r.status]}
+        </div>
+      </div>
+      <div class="req-name">${r.customerName} · ${r.companyName || '회사명 없음'}</div>
+      <div class="req-meta">${r.customerEmail} · ${date}</div>
+      <div class="req-project">📋 ${r.projectName}</div>
+      <div class="req-actions">
+        <button class="btn-view" onclick="openModal('${r.requestId}')">🔍 상세보기</button>
+        ${r.status === 'pending' ? `
+          <button class="btn-processing" onclick="markProcessing('${r.requestId}')">⚙️ 처리 시작</button>` : ''}
+        ${r.status !== 'completed' ? `
+          <button class="btn-complete" onclick="openComplete('${r.requestId}')">✅ 완성본 전달</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function renderModal() {
+  const r = selectedRequest;
+  if (!r) return '';
+  return `
+    <div class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal">
+        <div class="modal-title">
+          ${r.mode === 'complete' ? '✅ 완성본 전달' : '🔍 요청 상세'}
+        </div>
+        ${r.mode === 'detail' ? `
+          <div class="modal-row"><span class="modal-key">요청 번호</span><span class="modal-val">${r.requestId}</span></div>
+          <div class="modal-row"><span class="modal-key">고객명</span><span class="modal-val">${r.customerName}</span></div>
+          <div class="modal-row"><span class="modal-key">회사명</span><span class="modal-val">${r.companyName || '-'}</span></div>
+          <div class="modal-row"><span class="modal-key">이메일</span><span class="modal-val">${r.customerEmail}</span></div>
+          <div class="modal-row"><span class="modal-key">과제명</span><span class="modal-val">${r.projectName}</span></div>
+          <div class="modal-row"><span class="modal-key">메모</span><span class="modal-val">${r.memo || '-'}</span></div>
+          <div class="modal-row"><span class="modal-key">요청일시</span><span class="modal-val">${new Date(r.createdAt).toLocaleString('ko-KR')}</span></div>
+          ${r.completedAt ? `<div class="modal-row"><span class="modal-key">완료일시</span><span class="modal-val">${new Date(r.completedAt).toLocaleString('ko-KR')}</span></div>` : ''}
+          <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px">첨부 사진</div>
+          <img src="data:image/jpeg;base64,${r.base64Image||''}" class="modal-img" onerror="this.style.display='none'">
+          <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">닫기</button>
+            ${r.status !== 'completed' ? `<button class="btn-send" onclick="openComplete('${r.requestId}')">완성본 전달하기</button>` : ''}
+          </div>
+        ` : `
+          <div class="modal-row"><span class="modal-key">고객</span><span class="modal-val">${r.customerName} (${r.customerEmail})</span></div>
+          <div class="modal-row"><span class="modal-key">과제명</span><span class="modal-val">${r.projectName}</span></div>
+          <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:4px">완성된 연구노트 내용</div>
+          <textarea class="note-input" id="noteInput" placeholder="완성된 연구노트 내용을 입력하세요...
+
+예시:
+연구과제명: ${r.projectName}
+연구기간: 2026.04.07
+연구담당자: ${r.customerName}
+
+[연구 목적]
+...
+
+[연구 방법]
+...
+
+[연구 결과]
+...
+
+[향후 계획]
+..."></textarea>
+          <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">취소</button>
+            <button class="btn-send" id="sendBtn" onclick="sendComplete('${r.requestId}')">📤 이메일 전송</button>
+          </div>
+        `}
+      </div>
+    </div>`;
+}
+
+/* ── 액션 ─── */
+async function login() {
+  const key = document.getElementById('keyInput').value.trim();
+  if (!key) return;
+  adminKey = key;
+  document.getElementById('headerBadge').innerHTML =
+    `<div class="badge">관리자 모드</div>`;
+  await loadRequests();
+}
+
+async function loadRequests() {
+  try {
+    const res = await fetch(`${API}/api/managed/list?adminKey=${adminKey}`);
+    if (!res.ok) { alert('인증 실패. 관리자 키를 확인하세요.'); adminKey=''; render(); return; }
+    const data = await res.json();
+    requests = data.requests || [];
+    render();
+  } catch(e) {
+    alert('서버 연결 실패: ' + e.message);
+  }
+}
+
+async function markProcessing(requestId) {
+  try {
+    await fetch(`${API}/api/managed/processing`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminKey, requestId }),
+    });
+    await loadRequests();
+  } catch(e) { alert('오류: ' + e.message); }
+}
+
+function setFilter(f) { filter = f; render(); }
+
+function openModal(requestId) {
+  selectedRequest = { ...requests.find(r => r.requestId === requestId), mode: 'detail' };
+  render();
+}
+
+function openComplete(requestId) {
+  selectedRequest = { ...requests.find(r => r.requestId === requestId), mode: 'complete' };
+  render();
+}
+
+function closeModal(e) {
+  if (!e || e.target.classList.contains('modal-overlay')) {
+    selectedRequest = null; render();
+  }
+}
+
+async function sendComplete(requestId) {
+  const note = document.getElementById('noteInput').value.trim();
+  if (!note) { alert('연구노트 내용을 입력해 주세요.'); return; }
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true; btn.textContent = '전송 중...';
+  try {
+    const res = await fetch(`${API}/api/managed/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminKey, requestId, resultNote: note }),
+    });
+    if (!res.ok) throw new Error('전송 실패');
+    selectedRequest = null;
+    await loadRequests();
+    alert('✅ 완성본이 고객에게 이메일로 전송되었습니다!');
+  } catch(e) {
+    alert('오류: ' + e.message);
+    btn.disabled = false; btn.textContent = '📤 이메일 전송';
+  }
+}
+
+/* ── 초기화 ─── */
+render();
+</script>
+</body>
+</html>
