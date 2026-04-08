@@ -7,320 +7,339 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: 'Segoe UI', sans-serif; background:#0B1D2E; color:#fff; min-height:100vh; }
-
   .header { background:#0d2035; padding:20px 24px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; justify-content:space-between; }
-  .logo { font-size:22px; font-weight:900; }
-  .logo span { color:#00B894; }
+  .logo { font-size:22px; font-weight:900; } .logo span { color:#00B894; }
   .badge { background:rgba(0,184,148,.2); color:#00B894; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; border:1px solid #00B894; }
-
   .main { padding:24px; max-width:1000px; margin:0 auto; }
-
-  /* 로그인 */
+  .tabs { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+  .tab { padding:10px 20px; border-radius:10px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:rgba(255,255,255,.5); font-size:14px; font-weight:600; cursor:pointer; }
+  .tab.active { background:#00B894; border-color:#00B894; color:#fff; }
   .login-wrap { display:flex; align-items:center; justify-content:center; min-height:80vh; }
   .login-card { background:#0d2035; border-radius:20px; padding:40px; width:100%; max-width:400px; border:1px solid rgba(255,255,255,.08); }
   .login-title { font-size:22px; font-weight:800; margin-bottom:8px; }
   .login-sub { color:rgba(255,255,255,.4); font-size:14px; margin-bottom:28px; }
-  .login-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 16px; font-size:15px; color:#fff; outline:none; margin-bottom:12px; }
-  .login-input:focus { border-color:#00B894; }
-  .login-btn { width:100%; background:#00B894; border:none; border-radius:12px; padding:16px; font-size:16px; font-weight:800; color:#fff; cursor:pointer; }
-  .login-btn:hover { background:#00a070; }
-
-  /* 통계 카드 */
+  .input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 16px; font-size:15px; color:#fff; outline:none; margin-bottom:12px; }
+  .input:focus { border-color:#00B894; }
+  textarea.input { min-height:300px; font-family:monospace; font-size:13px; resize:vertical; }
+  .btn { padding:12px 24px; border-radius:10px; border:none; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn-primary { background:#00B894; color:#fff; } .btn-primary:hover { background:#00a070; }
+  .btn-secondary { background:rgba(255,255,255,.08); color:#fff; border:1.5px solid rgba(255,255,255,.12); }
+  .btn-danger { background:#E53E3E; color:#fff; }
+  .card { background:#0d2035; border-radius:16px; padding:20px; margin-bottom:16px; border:1px solid rgba(255,255,255,.06); }
+  .card-title { font-size:16px; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
   .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
-  .stat-card { background:#0d2035; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,.06); }
-  .stat-num { font-size:32px; font-weight:900; color:#00B894; margin-bottom:4px; }
+  .stat { background:#0d2035; border-radius:14px; padding:18px; border:1px solid rgba(255,255,255,.06); text-align:center; }
+  .stat-num { font-size:28px; font-weight:900; color:#00B894; margin-bottom:4px; }
   .stat-label { font-size:13px; color:rgba(255,255,255,.4); }
-
-  /* 필터 */
-  .filter-row { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
-  .filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:rgba(255,255,255,.5); font-size:13px; font-weight:600; cursor:pointer; }
-  .filter-btn.active { background:#00B894; border-color:#00B894; color:#fff; }
-
-  /* 요청 카드 */
-  .request-card { background:#0d2035; border-radius:16px; padding:20px; margin-bottom:12px; border:1px solid rgba(255,255,255,.06); }
-  .request-card:hover { border-color:rgba(0,184,148,.3); }
-  .req-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
-  .req-id { font-size:12px; color:rgba(255,255,255,.3); font-family:monospace; }
-  .status-badge { padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; }
-  .status-pending    { background:rgba(255,193,7,.15);  color:#FFC107; border:1px solid rgba(255,193,7,.3); }
-  .status-processing { background:rgba(59,130,246,.15); color:#3B82F6; border:1px solid rgba(59,130,246,.3); }
-  .status-completed  { background:rgba(0,184,148,.15);  color:#00B894; border:1px solid rgba(0,184,148,.3); }
-  .req-name { font-size:17px; font-weight:700; margin-bottom:4px; }
-  .req-meta { font-size:13px; color:rgba(255,255,255,.4); margin-bottom:12px; }
-  .req-project { font-size:14px; color:#00B894; font-weight:600; margin-bottom:12px; }
-
-  .req-actions { display:flex; gap:10px; flex-wrap:wrap; }
-  .btn-view   { padding:8px 16px; border-radius:10px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#fff; font-size:13px; font-weight:600; cursor:pointer; }
-  .btn-view:hover { background:rgba(255,255,255,.06); }
-  .btn-complete { padding:8px 16px; border-radius:10px; border:none; background:#00B894; color:#fff; font-size:13px; font-weight:700; cursor:pointer; }
-  .btn-complete:hover { background:#00a070; }
-  .btn-processing { padding:8px 16px; border-radius:10px; border:none; background:#3B82F6; color:#fff; font-size:13px; font-weight:700; cursor:pointer; }
-
-  /* 모달 */
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
-  .modal { background:#0d2035; border-radius:20px; padding:28px; width:100%; max-width:600px; border:1px solid rgba(255,255,255,.1); max-height:90vh; overflow-y:auto; }
-  .modal-title { font-size:18px; font-weight:800; margin-bottom:20px; }
-  .modal-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-  .modal-key { font-size:13px; color:rgba(255,255,255,.4); }
-  .modal-val { font-size:13px; font-weight:600; text-align:right; max-width:60%; }
-  .modal-img { width:100%; border-radius:12px; margin:16px 0; }
-  .note-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:12px; padding:14px; font-size:14px; color:#fff; outline:none; min-height:160px; resize:vertical; margin:16px 0; }
-  .note-input:focus { border-color:#00B894; }
-  .modal-btns { display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
-  .btn-cancel { padding:12px 20px; border-radius:10px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#fff; font-size:14px; cursor:pointer; }
-  .btn-send { padding:12px 24px; border-radius:10px; border:none; background:#00B894; color:#fff; font-size:14px; font-weight:700; cursor:pointer; }
-  .btn-send:hover { background:#00a070; }
-  .btn-send:disabled { opacity:.5; cursor:not-allowed; }
-
-  .empty { text-align:center; padding:60px 20px; color:rgba(255,255,255,.3); }
-  .empty-icon { font-size:48px; margin-bottom:16px; }
-  .refresh-btn { background:rgba(0,184,148,.15); border:1.5px solid rgba(0,184,148,.3); color:#00B894; padding:10px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-left:auto; display:block; }
-
-  @media(max-width:600px) {
-    .stats { grid-template-columns:repeat(2,1fr); }
-    .modal { padding:20px; }
-  }
+  .tip-item { display:flex; gap:10px; align-items:flex-start; background:rgba(255,255,255,.04); border-radius:10px; padding:12px; margin-bottom:8px; }
+  .tip-icon { font-size:20px; min-width:28px; }
+  .tip-cat { font-size:11px; color:#00B894; font-weight:700; margin-bottom:4px; }
+  .tip-text { font-size:13px; color:rgba(255,255,255,.7); line-height:1.6; }
+  .tip-actions { display:flex; gap:6px; margin-top:6px; }
+  .btn-sm { padding:4px 10px; font-size:12px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+  .deadline-item { display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,.04); border-radius:10px; margin-bottom:8px; }
+  .deadline-title { font-size:14px; font-weight:700; margin-bottom:2px; }
+  .deadline-date { font-size:12px; color:rgba(255,255,255,.4); }
+  .deadline-amount { font-size:12px; color:#00B894; font-weight:600; }
+  .urgent-badge { background:rgba(229,62,62,.2); color:#E53E3E; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:700; border:1px solid rgba(229,62,62,.3); }
+  .form-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .form-group { flex:1; min-width:150px; }
+  .form-label { font-size:12px; color:rgba(255,255,255,.5); margin-bottom:4px; display:block; }
+  .success-msg { background:rgba(0,184,148,.15); border:1px solid rgba(0,184,148,.3); color:#00B894; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:14px; }
+  .info-box { background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.3); color:#3B82F6; padding:14px 16px; border-radius:10px; margin-bottom:16px; font-size:13px; line-height:1.8; }
+  @media(max-width:600px) { .stats { grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="logo">RD<span>Log</span> 관리자</div>
   <div id="headerBadge"></div>
 </div>
-
 <div class="main" id="app"></div>
 
 <script>
 const API = 'https://rdlog-server-production.up.railway.app';
 let adminKey = '';
+let activeTab = 'dashboard';
 let requests = [];
-let filter = 'all';
-let selectedRequest = null;
+let content = { tips:[], taxEvents:[], deadlines:[] };
+let successMsg = '';
 
-/* ── 렌더 ─── */
 function render() {
   const app = document.getElementById('app');
   if (!adminKey) { app.innerHTML = renderLogin(); return; }
-  app.innerHTML = renderDashboard();
-}
-
-function renderLogin() {
-  return `
-    <div class="login-wrap">
-      <div class="login-card">
-        <div style="font-size:40px;text-align:center;margin-bottom:16px">🔐</div>
-        <div class="login-title">관리자 로그인</div>
-        <div class="login-sub">RDLog 대행 서비스 관리 패널</div>
-        <input class="login-input" type="password" id="keyInput" placeholder="관리자 키 입력" 
-          onkeydown="if(event.key==='Enter')login()">
-        <button class="login-btn" onclick="login()">로그인</button>
-      </div>
-    </div>`;
-}
-
-function renderDashboard() {
-  const filtered = filter === 'all' ? requests :
-    requests.filter(r => r.status === filter);
-
-  const pending   = requests.filter(r => r.status === 'pending').length;
-  const processing= requests.filter(r => r.status === 'processing').length;
-  const completed = requests.filter(r => r.status === 'completed').length;
-
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div>
-        <div style="font-size:22px;font-weight:800">대행 요청 관리</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:4px">총 ${requests.length}건</div>
-      </div>
-      <button class="refresh-btn" onclick="loadRequests()">↻ 새로고침</button>
-    </div>
-
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-num">${pending}</div>
-        <div class="stat-label">⏳ 대기 중</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" style="color:#3B82F6">${processing}</div>
-        <div class="stat-label">⚙️ 처리 중</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">${completed}</div>
-        <div class="stat-label">✅ 완료</div>
-      </div>
-    </div>
-
-    <div class="filter-row">
-      ${['all','pending','processing','completed'].map(f => `
-        <button class="filter-btn ${filter===f?'active':''}" onclick="setFilter('${f}')">
-          ${{all:'전체',pending:'대기중',processing:'처리중',completed:'완료'}[f]}
+  app.innerHTML = `
+    <div class="tabs">
+      ${['dashboard','managed','tips','deadlines'].map(t => `
+        <button class="tab ${activeTab===t?'active':''}" onclick="setTab('${t}')">
+          ${{dashboard:'📊 대시보드', managed:'📋 대행 요청', tips:'💡 경영 팁', deadlines:'🏛 마감 일정'}[t]}
         </button>`).join('')}
     </div>
-
-    ${filtered.length === 0 ? `
-      <div class="empty">
-        <div class="empty-icon">📭</div>
-        <div>요청이 없습니다</div>
-      </div>` :
-      filtered.map(r => renderCard(r)).join('')
-    }
-
-    ${selectedRequest ? renderModal() : ''}
+    ${successMsg ? `<div class="success-msg">✅ ${successMsg}</div>` : ''}
+    ${activeTab === 'dashboard'  ? renderDashboard()  : ''}
+    ${activeTab === 'managed'    ? renderManaged()    : ''}
+    ${activeTab === 'tips'       ? renderTips()       : ''}
+    ${activeTab === 'deadlines'  ? renderDeadlines()  : ''}
   `;
 }
 
-function renderCard(r) {
-  const date = new Date(r.createdAt).toLocaleString('ko-KR');
+/* ── 대시보드 ── */
+function renderDashboard() {
+  const pending   = requests.filter(r=>r.status==='pending').length;
+  const processing= requests.filter(r=>r.status==='processing').length;
+  const completed = requests.filter(r=>r.status==='completed').length;
   return `
-    <div class="request-card">
-      <div class="req-header">
-        <div class="req-id">${r.requestId}</div>
-        <div class="status-badge status-${r.status}">
-          ${{pending:'⏳ 대기중',processing:'⚙️ 처리중',completed:'✅ 완료'}[r.status]}
-        </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">${pending}</div><div class="stat-label">⏳ 대기 중</div></div>
+      <div class="stat"><div class="stat-num" style="color:#3B82F6">${processing}</div><div class="stat-label">⚙️ 처리 중</div></div>
+      <div class="stat"><div class="stat-num">${completed}</div><div class="stat-label">✅ 완료</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📌 빠른 현황</div>
+      <p style="color:rgba(255,255,255,.5);font-size:14px">
+        총 대행 요청: ${requests.length}건 | 
+        경영 팁: ${content.tips.length}개 | 
+        마감 일정: ${content.deadlines.length}개
+      </p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="loadAll()">↻ 전체 새로고침</button>
+        <button class="btn btn-secondary" onclick="setTab('managed')">📋 대행 요청 보기</button>
       </div>
-      <div class="req-name">${r.customerName} · ${r.companyName || '회사명 없음'}</div>
-      <div class="req-meta">${r.customerEmail} · ${date}</div>
-      <div class="req-project">📋 ${r.projectName}</div>
-      <div class="req-actions">
-        <button class="btn-view" onclick="openModal('${r.requestId}')">🔍 상세보기</button>
-        ${r.status === 'pending' ? `
-          <button class="btn-processing" onclick="markProcessing('${r.requestId}')">⚙️ 처리 시작</button>` : ''}
-        ${r.status !== 'completed' ? `
-          <button class="btn-complete" onclick="openComplete('${r.requestId}')">✅ 완성본 전달</button>` : ''}
-      </div>
+    </div>
+    <div class="info-box">
+      💡 <strong>콘텐츠 업데이트 방법</strong><br>
+      경영 팁 탭에서 팁을 추가/삭제하면 앱 사용자에게 즉시 반영됩니다.<br>
+      마감 일정 탭에서 정부지원 마감일을 관리할 수 있습니다.<br>
+      서버 재시작 시 기본값으로 초기화됩니다.
     </div>`;
 }
 
-function renderModal() {
-  const r = selectedRequest;
-  if (!r) return '';
-  return `
-    <div class="modal-overlay" onclick="closeModal(event)">
-      <div class="modal">
-        <div class="modal-title">
-          ${r.mode === 'complete' ? '✅ 완성본 전달' : '🔍 요청 상세'}
+/* ── 대행 요청 ── */
+function renderManaged() {
+  if (!requests.length) return `<div class="card"><p style="text-align:center;color:rgba(255,255,255,.3);padding:40px">요청이 없습니다</p></div>`;
+  return requests.map(r => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">${r.requestId}</div>
+          <div style="font-size:17px;font-weight:700;margin:4px 0">${r.customerName} · ${r.companyName||'-'}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.4)">${r.customerEmail} · ${new Date(r.createdAt).toLocaleString('ko-KR')}</div>
+          <div style="font-size:14px;color:#00B894;font-weight:600;margin-top:4px">📋 ${r.projectName}</div>
         </div>
-        ${r.mode === 'detail' ? `
-          <div class="modal-row"><span class="modal-key">요청 번호</span><span class="modal-val">${r.requestId}</span></div>
-          <div class="modal-row"><span class="modal-key">고객명</span><span class="modal-val">${r.customerName}</span></div>
-          <div class="modal-row"><span class="modal-key">회사명</span><span class="modal-val">${r.companyName || '-'}</span></div>
-          <div class="modal-row"><span class="modal-key">이메일</span><span class="modal-val">${r.customerEmail}</span></div>
-          <div class="modal-row"><span class="modal-key">과제명</span><span class="modal-val">${r.projectName}</span></div>
-          <div class="modal-row"><span class="modal-key">메모</span><span class="modal-val">${r.memo || '-'}</span></div>
-          <div class="modal-row"><span class="modal-key">요청일시</span><span class="modal-val">${new Date(r.createdAt).toLocaleString('ko-KR')}</span></div>
-          ${r.completedAt ? `<div class="modal-row"><span class="modal-key">완료일시</span><span class="modal-val">${new Date(r.completedAt).toLocaleString('ko-KR')}</span></div>` : ''}
-          <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px">첨부 사진</div>
-          <img src="data:image/jpeg;base64,${r.base64Image||''}" class="modal-img" onerror="this.style.display='none'">
-          <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">닫기</button>
-            ${r.status !== 'completed' ? `<button class="btn-send" onclick="openComplete('${r.requestId}')">완성본 전달하기</button>` : ''}
-          </div>
-        ` : `
-          <div class="modal-row"><span class="modal-key">고객</span><span class="modal-val">${r.customerName} (${r.customerEmail})</span></div>
-          <div class="modal-row"><span class="modal-key">과제명</span><span class="modal-val">${r.projectName}</span></div>
-          <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:4px">완성된 연구노트 내용</div>
-          <textarea class="note-input" id="noteInput" placeholder="완성된 연구노트 내용을 입력하세요...
-
-예시:
-연구과제명: ${r.projectName}
-연구기간: 2026.04.07
-연구담당자: ${r.customerName}
-
-[연구 목적]
-...
-
-[연구 방법]
-...
-
-[연구 결과]
-...
-
-[향후 계획]
-..."></textarea>
-          <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">취소</button>
-            <button class="btn-send" id="sendBtn" onclick="sendComplete('${r.requestId}')">📤 이메일 전송</button>
-          </div>
-        `}
+        <span style="padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;background:${r.status==='pending'?'rgba(255,193,7,.15)':r.status==='completed'?'rgba(0,184,148,.15)':'rgba(59,130,246,.15)'};color:${r.status==='pending'?'#FFC107':r.status==='completed'?'#00B894':'#3B82F6'}">
+          ${r.status==='pending'?'⏳ 대기':r.status==='completed'?'✅ 완료':'⚙️ 처리중'}
+        </span>
       </div>
+      ${r.status !== 'completed' ? `
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${r.status==='pending'?`<button class="btn btn-secondary btn-sm" onclick="markProcessing('${r.requestId}')" style="padding:8px 14px">⚙️ 처리 시작</button>`:''}
+          <button class="btn btn-primary btn-sm" onclick="openComplete('${r.requestId}')" style="padding:8px 14px">✅ 완성본 전달</button>
+        </div>` : ''}
+    </div>`).join('');
+}
+
+/* ── 경영 팁 관리 ── */
+function renderTips() {
+  return `
+    <div class="card">
+      <div class="card-title">💡 새 팁 추가</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">이모지</label>
+          <input class="input" id="newTipIcon" placeholder="💰" style="padding:10px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">카테고리</label>
+          <select class="input" id="newTipCat" style="padding:10px">
+            <option>절세</option><option>R&D</option><option>정부지원</option>
+            <option>노무</option><option>인증</option><option>자금</option>
+            <option>법무</option><option>경영</option>
+          </select>
+        </div>
+      </div>
+      <textarea class="input" id="newTipText" placeholder="팁 내용을 입력하세요..." style="min-height:80px;margin-bottom:10px"></textarea>
+      <button class="btn btn-primary" onclick="addTip()">+ 팁 추가</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 현재 팁 목록 (${content.tips.length}개)</div>
+      ${content.tips.map((tip, i) => `
+        <div class="tip-item">
+          <div class="tip-icon">${tip.icon}</div>
+          <div style="flex:1">
+            <div class="tip-cat">${tip.category}</div>
+            <div class="tip-text">${tip.tip}</div>
+          </div>
+          <button class="btn-sm btn-danger" onclick="deleteTip(${i})" style="background:#E53E3E;color:#fff;min-width:50px">삭제</button>
+        </div>`).join('')}
     </div>`;
 }
 
-/* ── 액션 ─── */
+/* ── 마감 일정 관리 ── */
+function renderDeadlines() {
+  return `
+    <div class="card">
+      <div class="card-title">🏛 새 마감 일정 추가</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">사업명 *</label>
+          <input class="input" id="newDlTitle" placeholder="초기창업패키지" style="padding:10px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">마감일 * (YYYY-MM-DD)</label>
+          <input class="input" id="newDlDate" placeholder="2026-06-30" style="padding:10px">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">지원 금액</label>
+          <input class="input" id="newDlAmount" placeholder="최대 1억원" style="padding:10px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">링크 URL</label>
+          <input class="input" id="newDlUrl" placeholder="https://..." style="padding:10px">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer">
+        <input type="checkbox" id="newDlUrgent"> <span style="font-size:14px">긴급 표시</span>
+      </label>
+      <button class="btn btn-primary" onclick="addDeadline()">+ 일정 추가</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 현재 마감 일정 (${content.deadlines.length}개)</div>
+      ${content.deadlines.map((d, i) => {
+        const dday = Math.ceil((new Date(d.date) - new Date()) / 86400000);
+        return `
+        <div class="deadline-item">
+          <div>
+            <div class="deadline-title">${d.title} ${d.urgent?'<span class="urgent-badge">긴급</span>':''}</div>
+            <div class="deadline-date">${d.date} · ${d.amount}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:14px;font-weight:900;color:${dday<=14?'#E53E3E':dday<=30?'#D97706':'#00B894'}">D-${dday}</span>
+            <button class="btn-sm btn-danger" onclick="deleteDeadline(${i})" style="background:#E53E3E;color:#fff">삭제</button>
+          </div>
+        </div>`;}).join('')}
+    </div>`;
+}
+
+/* ── 로그인 ── */
+function renderLogin() {
+  return `<div class="login-wrap"><div class="login-card">
+    <div style="font-size:40px;text-align:center;margin-bottom:16px">🔐</div>
+    <div class="login-title">관리자 로그인</div>
+    <div class="login-sub">RDLog 관리자 패널</div>
+    <input class="input" type="password" id="keyInput" placeholder="관리자 키 입력" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-primary" style="width:100%" onclick="login()">로그인</button>
+  </div></div>`;
+}
+
+/* ── 액션 함수들 ── */
 async function login() {
   const key = document.getElementById('keyInput').value.trim();
   if (!key) return;
   adminKey = key;
-  document.getElementById('headerBadge').innerHTML =
-    `<div class="badge">관리자 모드</div>`;
-  await loadRequests();
+  document.getElementById('headerBadge').innerHTML = `<div class="badge">관리자</div>`;
+  await loadAll();
+}
+
+async function loadAll() {
+  await Promise.all([loadRequests(), loadContent()]);
+  render();
 }
 
 async function loadRequests() {
   try {
     const res = await fetch(`${API}/api/managed/list?adminKey=${adminKey}`);
-    if (!res.ok) { alert('인증 실패. 관리자 키를 확인하세요.'); adminKey=''; render(); return; }
+    if (!res.ok) { alert('인증 실패'); adminKey=''; render(); return; }
     const data = await res.json();
     requests = data.requests || [];
+  } catch {}
+}
+
+async function loadContent() {
+  try {
+    const res = await fetch(`${API}/api/content/all`);
+    if (res.ok) content = await res.json();
+  } catch {}
+}
+
+function setTab(tab) { activeTab = tab; successMsg = ''; render(); }
+
+async function addTip() {
+  const icon = document.getElementById('newTipIcon').value.trim() || '💡';
+  const cat  = document.getElementById('newTipCat').value;
+  const tip  = document.getElementById('newTipText').value.trim();
+  if (!tip) { alert('팁 내용을 입력해 주세요.'); return; }
+  const newTips = [...content.tips, { icon, category:cat, tip }];
+  await updateContent('tips', newTips);
+}
+
+async function deleteTip(idx) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  const newTips = content.tips.filter((_, i) => i !== idx);
+  await updateContent('tips', newTips);
+}
+
+async function addDeadline() {
+  const title  = document.getElementById('newDlTitle').value.trim();
+  const date   = document.getElementById('newDlDate').value.trim();
+  const amount = document.getElementById('newDlAmount').value.trim() || '상시 신청';
+  const url    = document.getElementById('newDlUrl').value.trim() || '#';
+  const urgent = document.getElementById('newDlUrgent').checked;
+  if (!title || !date) { alert('사업명과 마감일을 입력해 주세요.'); return; }
+  const newDeadlines = [...content.deadlines, { title, date, amount, url, urgent }];
+  await updateContent('deadlines', newDeadlines);
+}
+
+async function deleteDeadline(idx) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  const newDeadlines = content.deadlines.filter((_, i) => i !== idx);
+  await updateContent('deadlines', newDeadlines);
+}
+
+async function updateContent(type, data) {
+  try {
+    const res = await fetch(`${API}/api/content/update`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ adminKey, type, data }),
+    });
+    if (!res.ok) throw new Error('업데이트 실패');
+    content[type] = data;
+    successMsg = `${type === 'tips' ? '경영 팁' : '마감 일정'}이 업데이트되었습니다! 앱에 즉시 반영됩니다.`;
     render();
-  } catch(e) {
-    alert('서버 연결 실패: ' + e.message);
-  }
+  } catch(e) { alert('업데이트 실패: ' + e.message); }
 }
 
 async function markProcessing(requestId) {
   try {
     await fetch(`${API}/api/managed/processing`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ adminKey, requestId }),
     });
-    await loadRequests();
-  } catch(e) { alert('오류: ' + e.message); }
+    await loadRequests(); render();
+  } catch {}
 }
 
-function setFilter(f) { filter = f; render(); }
-
-function openModal(requestId) {
-  selectedRequest = { ...requests.find(r => r.requestId === requestId), mode: 'detail' };
-  render();
-}
-
+let completeTarget = null;
 function openComplete(requestId) {
-  selectedRequest = { ...requests.find(r => r.requestId === requestId), mode: 'complete' };
-  render();
+  completeTarget = requestId;
+  const note = prompt('완성된 연구노트 내용을 입력하세요:');
+  if (note) sendComplete(requestId, note);
 }
 
-function closeModal(e) {
-  if (!e || e.target.classList.contains('modal-overlay')) {
-    selectedRequest = null; render();
-  }
-}
-
-async function sendComplete(requestId) {
-  const note = document.getElementById('noteInput').value.trim();
-  if (!note) { alert('연구노트 내용을 입력해 주세요.'); return; }
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = true; btn.textContent = '전송 중...';
+async function sendComplete(requestId, note) {
   try {
     const res = await fetch(`${API}/api/managed/complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ adminKey, requestId, resultNote: note }),
     });
     if (!res.ok) throw new Error('전송 실패');
-    selectedRequest = null;
-    await loadRequests();
-    alert('✅ 완성본이 고객에게 이메일로 전송되었습니다!');
-  } catch(e) {
-    alert('오류: ' + e.message);
-    btn.disabled = false; btn.textContent = '📤 이메일 전송';
-  }
+    successMsg = '완성본이 고객에게 전송되었습니다!';
+    await loadRequests(); render();
+  } catch(e) { alert('오류: ' + e.message); }
 }
 
-/* ── 초기화 ─── */
 render();
 </script>
 </body>
