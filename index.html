@@ -483,6 +483,72 @@ footer {
   transition: opacity .6s ease, transform .6s ease;
 }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ══════════════════════════════
+   COMING SOON — 설비 모니터링
+══════════════════════════════ */
+.coming-soon { background: var(--gray1); padding: 80px 0; }
+.cs-card {
+  background: var(--navy);
+  border-radius: 24px;
+  padding: 64px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cs-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%,  rgba(0,184,148,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(246,201,14,0.12) 0%, transparent 55%);
+  pointer-events: none;
+}
+.cs-card > * { position: relative; z-index: 1; }
+.cs-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 12px; font-weight: 800; letter-spacing: 1px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+.cs-icon { font-size: 56px; margin-bottom: 16px; line-height: 1; }
+.cs-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -1.5px;
+  margin-bottom: 24px;
+}
+.cs-desc {
+  font-size: 17px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.85;
+  margin-bottom: 36px;
+}
+.cs-price {
+  color: var(--teal);
+  font-weight: 900;
+  font-size: 22px;
+}
+.cs-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--teal);
+  color: var(--white);
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  text-decoration: none;
+  transition: all .2s;
+  box-shadow: 0 8px 32px rgba(0,184,148,0.35);
+}
+.cs-btn:hover { background: var(--teal2); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,184,148,0.45); }
+
+@media (max-width: 600px) {
+  .cs-card { padding: 48px 24px; }
+}
 </style>
 </head>
 <body>
@@ -706,6 +772,25 @@ footer {
         <div class="feat-desc">RS-485·Modbus 장비 연동으로 24시간 무인 자동 기록. 현재 개발 중이며 출시 일정은 카카오톡 채널 에스지테크로 문의해 주세요.</div>
         <div class="feat-tag" style="background:#FEF3C7; color:#D97706;">준비중</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMING SOON — 설비 모니터링 -->
+<section class="coming-soon" id="monitoring">
+  <div class="container">
+    <div class="cs-card fade-up">
+      <div class="cs-badge">⏳ 준비중</div>
+      <div class="cs-icon">⚙️</div>
+      <h2 class="cs-title">스마트팩토리 모니터링</h2>
+      <p class="cs-desc">
+        대기업이 수억원에 구축하는<br>
+        실시간 설비 모니터링을<br>
+        <span class="cs-price">월 49,000원</span>으로 곧 만나보세요
+      </p>
+      <a href="https://pf.kakao.com/_lUxfqX/chat" class="cs-btn" target="_blank" rel="noopener">
+        🔔 출시 알림 신청
+      </a>
     </div>
   </div>
 </section>
